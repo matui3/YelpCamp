@@ -59,30 +59,23 @@ app.get('/campgrounds/:id/edit', async(req, res) => {
 
 app.put('/campgrounds/:id', async(req, res) => {
     const { id } = req.params; 
-    const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground}).then((err, docs) => {
-        if (err) {
-            console.log(err)
-            res.send(err)
-        } else {
-            console.log("Updated: ", docs)
-            res.send("Updated: ", docs)
-        }
-    })
-    res.redirect(`/campgrounds/${campground._id}`)
+    try {
+        const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground })
+        res.redirect(`/campgrounds/${campground._id}`)
+    }
+    catch(err) {
+        console.log(err)
+    }
 })
 
 app.delete('/campgrounds/:id', async(req, res) => {
     const { id } = req.params;
-    await Campground.findByIdAndDelete(id).then((err, docs) => {
-        if (err) {
-            console.log(err)
-            res.send(err)            
-        } else {
-            console.log("Deleted: ", docs)
-            res.send("Deleted: ", docs)
-        }
-    });
-    res.redirect('/campgrounds/'); 
+    try {
+        await Campground.findByIdAndDelete(id);
+        res.redirect('/campgrounds'); 
+    } catch (err) {
+        console.log(err)
+    }  
 })
 
 app.listen(3000, () => {
